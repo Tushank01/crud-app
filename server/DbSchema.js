@@ -5,4 +5,4 @@ const userSchema=mongoose.Schema({
     alias:String
 })
 
-export default mongoose.model('USER',userSchema);
+export default mongoose.model('DEMO',userSchema);

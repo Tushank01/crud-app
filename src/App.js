@@ -1,4 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react'
+import axios from 'axios'
 import AddUserForm from './forms/AddUserForm'
 import EditUserForm from './forms/EditUserForm'
 import UserTable from './tables/UserTable'
@@ -6,12 +7,12 @@ import UserTable from './tables/UserTable'
 const App = () => {
 	// Data
 	const [userData,setUserData]=useState([]);
+	const [name,setName]=useState("");
+	const [alias,setAlias]=useState("");
 
 	useEffect(()=>{
-		fetch("http://localhost:5000/getUsers")
-		.then((data)=>{
-			setUserData(data);
-		})
+		axios.get("http://localhost:5000/getUsers")
+		.then((data)=> setUserData(data.data));
 	},[userData])
 
 	const initialFormState = { id: null, name: '', username: '' }
@@ -45,6 +46,14 @@ const App = () => {
 		setCurrentUser({ id: user.id, name: user.name, username: user.username })
 	}
 
+	const handleClick=(e)=>{
+		e.preventDefault();
+		console.log("Working");
+
+		axios.post("http://localhost:5000/addUser",{name:name,alias:alias});
+
+	}
+
 	return (
 		<div className="container">
 			<h1>CRUD App</h1>
@@ -62,13 +71,20 @@ const App = () => {
 					) : (
 						<Fragment>
 							<h2>Add Player</h2>
-							<AddUserForm addUser={addUser} />
+							{/* <AddUserForm addUser={addUser} /> */}
+							<form>
+								<label>Name</label>
+								<input onChange={(e)=> setName(e.target.value)} type="text" name="name" />
+								<label>Alias</label>
+								<input onChange={(e)=> setAlias(e.target.value)} type="text" name="alias" />
+								<button onClick={(e)=> handleClick(e)}>Add New Player</button>
+							</form>
 						</Fragment>
 					)}
 				</div>
 				<div className="flex-large">
 				<h2>User Table</h2>
-					<UserTable users={users} editRow={editRow} deleteUser={deleteUser} />
+					<UserTable users={userData} editRow={editRow} deleteUser={deleteUser} />
 				</div>
 			</div>
 		</div>
